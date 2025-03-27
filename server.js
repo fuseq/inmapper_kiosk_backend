@@ -46,17 +46,19 @@ app.get("/kiosk", (req, res) => {
     const ipAddress = req.query.ip;
     console.log(`Cihaz IP Adresi: ${ipAddress}`);
 
-   
     const kiosks = getKioskData();
 
- 
     if (kiosks[ipAddress]) {
-        res.json({ page: kiosks[ipAddress].page });
+        let pageUrl = kiosks[ipAddress].page;
+        
+        const separator = pageUrl.includes("?") ? "&" : "?";
+        pageUrl += `${separator}v=${currentVersion}`;
+
+        res.json({ page: pageUrl });
     } else {
         res.status(404).json({ error: "Kiosk not found" });
     }
 });
-
 
 app.post("/update-version", (req, res) => {
     currentVersion = `1.0.${Math.floor(Math.random() * 100)}`; 
